@@ -1,11 +1,6 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
-import {
-  createPublicClient,
-  createWalletClient,
-  http,
-  Address,
-  Log,
-} from 'viem';
+import { ConfigService } from '@nestjs/config';
+import { createPublicClient, createWalletClient, http, Address } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { sepolia } from 'viem/chains';
 
@@ -48,25 +43,33 @@ const payLockBytecode =
 @Injectable()
 export class BlockchainService implements OnModuleInit {
   private readonly logger = new Logger(BlockchainService.name);
-  private publicClient: ReturnType<typeof createPublicClient>;
-  private walletClient: ReturnType<typeof createWalletClient>;
-  private account;
+  private publicClient!: ReturnType<typeof createPublicClient>;
+  private walletClient!: ReturnType<typeof createWalletClient>;
+  private account!: ReturnType<typeof privateKeyToAccount>;
+
+  // Inject ConfigService to access .env variables
+  constructor(private configService: ConfigService) {}
 
   onModuleInit() {
     this.logger.log('Initializing BlockchainService on Sepolia');
 
-    // In a real app, use an env var: process.env.PRIVATE_KEY
-    const pk =
-      '0x1000000000000000000000000000000000000000000000000000000000000000';
-    this.account = privateKeyToAccount(pk as `0x${string}`);
+    // 1. Get Private Key from .env
+    const privateKey = this.configService.get<string>('PRIVATE_KEY');
+    if (!privateKey) {
+      throw new Error('PRIVATE_KEY is missing in environment variables');
+    }
 
+    // 2. Initialize Account
+    this.account = privateKeyToAccount(privateKey as `0x${string}`);
+
+    // 3. Setup Sepolia (Testnet) Clients
     this.publicClient = createPublicClient({
-      chain: sepolia,
-      transport: http(),
+      chain: sepolia, // Sepolia testnet
+      transport: http(), // Uses public RPC by default. You can pass Alchemy/Infura URL here if preferred.
     });
 
     this.walletClient = createWalletClient({
-      account: this.account,
+      account: this.account, // Bind the account to the WalletClient
       chain: sepolia,
       transport: http(),
     });
@@ -82,10 +85,13 @@ export class BlockchainService implements OnModuleInit {
     );
 
     try {
+      // 4. Pass the account during the deployContract call
       const hash = await this.walletClient.deployContract({
         abi: payLockAbi,
         bytecode: payLockBytecode as `0x${string}`,
         args: [clientAddr as Address, contractorAddr as Address, totalAmount],
+        account: this.account, // Include account here to resolve the TypeScript/Viem error
+        chain: sepolia, // Include chain parameter here
       });
 
       this.logger.log(`Deployment tx hash: ${hash}`);

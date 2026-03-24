@@ -17,3 +17,4 @@ echo "Deploying PayLockAgreement to Sepolia..."
 cast send --rpc-url $RPC_URL --private-key $PRIVATE_KEY --create src/PayLockAgreement.sol:PayLockAgreement $CLIENT_ADDR $CONTRACTOR_ADDR $TOTAL_AMOUNT
 
 echo "Deployment complete! Check your wallet address on Sepolia Etherscan to find the new contract."
+ 
