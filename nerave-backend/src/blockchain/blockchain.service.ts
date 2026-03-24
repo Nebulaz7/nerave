@@ -43,6 +43,7 @@ const payLockBytecode =
 @Injectable()
 export class BlockchainService implements OnModuleInit {
   private readonly logger = new Logger(BlockchainService.name);
+  private isMockMode = false;
   private publicClient!: ReturnType<typeof createPublicClient>;
   private walletClient!: ReturnType<typeof createWalletClient>;
   private account!: ReturnType<typeof privateKeyToAccount>;
@@ -53,10 +54,17 @@ export class BlockchainService implements OnModuleInit {
   onModuleInit() {
     this.logger.log('Initializing BlockchainService on Sepolia');
 
-    // 1. Get Private Key from .env
-    const privateKey = this.configService.get<string>('PRIVATE_KEY');
+    // Prefer WALLET_PRIVATE_KEY but keep backward compatibility with PRIVATE_KEY.
+    const privateKey =
+      this.configService.get<string>('WALLET_PRIVATE_KEY') ??
+      this.configService.get<string>('PRIVATE_KEY');
+
     if (!privateKey) {
-      throw new Error('PRIVATE_KEY is missing in environment variables');
+      this.isMockMode = true;
+      this.logger.warn(
+        'No wallet private key found. BlockchainService running in mock mode.',
+      );
+      return;
     }
 
     // 2. Initialize Account
@@ -65,13 +73,13 @@ export class BlockchainService implements OnModuleInit {
     // 3. Setup Sepolia (Testnet) Clients
     this.publicClient = createPublicClient({
       chain: sepolia, // Sepolia testnet
-      transport: http(), // Uses public RPC by default. You can pass Alchemy/Infura URL here if preferred.
+      transport: http(this.configService.get<string>('SEPOLIA_RPC_URL') || undefined), // Uses configured RPC URL when available.
     });
 
     this.walletClient = createWalletClient({
       account: this.account, // Bind the account to the WalletClient
       chain: sepolia,
-      transport: http(),
+      transport: http(this.configService.get<string>('SEPOLIA_RPC_URL') || undefined),
     });
   }
 
@@ -79,7 +87,14 @@ export class BlockchainService implements OnModuleInit {
     clientAddr: string,
     contractorAddr: string,
     totalAmount: bigint,
-  ) {
+  ): Promise<string> {
+    if (this.isMockMode) {
+      this.logger.warn(
+        'Mock deployment used; returning placeholder contract address for local testing.',
+      );
+      return '0x0000000000000000000000000000000000000000';
+    }
+
     this.logger.log(
       `Deploying agreement for Client: ${clientAddr}, Contractor: ${contractorAddr}`,
     );
@@ -99,6 +114,11 @@ export class BlockchainService implements OnModuleInit {
       const receipt = await this.publicClient.waitForTransactionReceipt({
         hash,
       });
+
+      if (!receipt.contractAddress) {
+        throw new Error('Contract deployment completed without contractAddress');
+      }
+
       this.logger.log(`Contract deployed at: ${receipt.contractAddress}`);
 
       return receipt.contractAddress;
@@ -108,7 +128,35 @@ export class BlockchainService implements OnModuleInit {
     }
   }
 
-  async listenToEvents(contractAddress: string) {
+  async confirmMilestone(
+    contractAddress: string,
+    milestoneIndex: number,
+    by: 'CLIENT' | 'CONTRACTOR',
+  ) {
+    if (this.isMockMode) {
+      this.logger.log(
+        `[MOCK] confirmMilestone contract=${contractAddress} milestone=${milestoneIndex} by=${by}`,
+      );
+      return;
+    }
+
+    this.logger.log(
+      `confirmMilestone called for ${contractAddress} milestone ${milestoneIndex} by ${by}`,
+    );
+    // TODO: call contract method when ABI/write path is finalized.
+  }
+
+  async listenToEvents(
+    contractAddress: string,
+    onMilestoneApproved?: (milestoneId: string, amount: string) => Promise<void> | void,
+  ) {
+    if (this.isMockMode) {
+      this.logger.log(
+        `[MOCK] listenToEvents registered for ${contractAddress} (no chain subscription in mock mode)`,
+      );
+      return;
+    }
+
     this.logger.log(
       `Listening for MilestoneApproved events on ${contractAddress}`,
     );
@@ -124,6 +172,10 @@ export class BlockchainService implements OnModuleInit {
           );
           // Here we would call the Interswitch service/webhook to auto-disburse
           this.handleAutoDisbursement(
+            log.args.milestoneId!.toString(),
+            log.args.amount!.toString(),
+          );
+          void onMilestoneApproved?.(
             log.args.milestoneId!.toString(),
             log.args.amount!.toString(),
           );

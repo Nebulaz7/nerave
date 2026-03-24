@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLIENT
+  CONTRACTOR
+}
+
+enum AgreementStatus {
+  PENDING_PAYMENT
+  FUNDED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum TransactionType {
+  COLLECTION
+  DISBURSEMENT
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  businessName String
+  passwordHash String
+  apiKey       String   @unique
+  role         Role
+  createdAt    DateTime @default(now())
+
+  clientAgreements     Agreement[] @relation("ClientAgreements")
+  contractorAgreements Agreement[] @relation("ContractorAgreements")
+}
+
+model Agreement {
+  id              String          @id @default(uuid())
+  contractAddress String?
+  clientId        String
+  contractorId    String
+  totalAmount     Decimal
+  status          AgreementStatus @default(PENDING_PAYMENT)
+  createdAt       DateTime        @default(now())
+
+  client       User          @relation("ClientAgreements", fields: [clientId], references: [id])
+  contractor   User          @relation("ContractorAgreements", fields: [contractorId], references: [id])
+  milestones   Milestone[]
+  transactions Transaction[]
+}
+
+model Milestone {
+  id                  String   @id @default(uuid())
+  agreementId         String
+  title               String
+  amount              Decimal
+  clientConfirmed     Boolean  @default(false)
+  contractorConfirmed Boolean  @default(false)
+  disbursed           Boolean  @default(false)
+  createdAt           DateTime @default(now())
+
+  agreement    Agreement     @relation(fields: [agreementId], references: [id])
+  transactions Transaction[]
+}
+
+model Transaction {
+  id              String            @id @default(uuid())
+  agreementId     String
+  milestoneId     String?
+  interswitchRef  String?
+  type            TransactionType
+  status          TransactionStatus @default(PENDING)
+  createdAt       DateTime          @default(now())
+
+  agreement Agreement  @relation(fields: [agreementId], references: [id])
+  milestone Milestone? @relation(fields: [milestoneId], references: [id])
+}

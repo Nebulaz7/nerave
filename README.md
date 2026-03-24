@@ -15,7 +15,11 @@
 ## ⚠️ Ground Rules
 - No code pushed to Git before **March 23rd (Kickoff day)**
 - Use **Sepolia testnet** throughout — no real money
-- Use **Interswitch sandbox** credentials throughout
+- Use **Interswitch sandbox** credentials throughout:
+  - Sandbox base URL: `https://sandbox.interswitchng.com`
+  - Transfer/Name Enquiry sandbox: `https://qa.interswitchng.com`
+  - Test Terminal ID: `3PBL0001`
+  - Test bank account: `0014261063` | bank code: `058` (GTB)
 - Every team member commits to the repo — judges check this
 - Deploy target: **Vercel** (frontend) + **Railway/Render** (NestJS backend)
 
@@ -31,8 +35,8 @@
 ## 🔷 Joshua — Smart Contracts + Blockchain Module
 
 ### Morning (9am – 1pm): Smart Contract
-- [ ] `forge init paylock-contracts` — scaffold Foundry project
-- [ ] Write `PayLockAgreement.sol` — core contract with:
+- [x] `forge init paylock-contracts` — scaffold Foundry project
+- [x] Write `PayLockAgreement.sol` — core contract with:
   - Agreement struct (client, contractor, total amount)
   - Milestone struct (title, amount, `clientConfirmed`, `contractorConfirmed`, `disbursed`)
   - `confirmMilestone(uint milestoneId)` — callable by client or contractor
@@ -124,6 +128,7 @@
 
 ### Afternoon (2pm – 7pm): SDK Package
 - [ ] `mkdir nerave-sdk && npm init`
+- [ ] Set up TypeScript — `tsconfig.json` with `declaration: true` and `outDir: dist`
 - [ ] Write SDK wrapper in TypeScript:
   ```typescript
   new Nerave({ apiKey: 'pk_test_xxx' })
@@ -131,6 +136,8 @@
   nerave.milestones.confirm({ ... })
   nerave.agreements.getStatus({ ... })
   ```
+- [ ] Add `baseUrl` config option — defaults to production API, overridable for local dev
+- [ ] Export proper TypeScript types for all inputs and responses
 - [ ] Point SDK at local NestJS API for now
 - [ ] Write `README.md` for the SDK — judges will read this
 - [ ] Test SDK methods manually
@@ -138,6 +145,7 @@
 ### End of Day Checkpoint ✅
 - Milestone approval on-chain triggers disbursement automatically
 - SDK package installable and working locally
+- TypeScript types exported cleanly — ready for npm publish on Day 3
 
 &nbsp;
 
@@ -150,18 +158,50 @@
 - [ ] Validate that only the correct party (client or contractor) can confirm each milestone
 
 ### Afternoon (2pm – 7pm): Payments + Webhooks
-- [ ] `payments/` module — Interswitch Web Checkout integration
-  - `initiatePayment(agreementId)` → returns Interswitch payment URL
-  - `verifyPayment(transactionRef)` → confirms payment status
-- [ ] `POST /webhooks/interswitch` — receives `TRANSACTION.COMPLETED` event
-  - Verify `X-Interswitch-Signature` using HmacSHA512
-  - Mark agreement as `FUNDED` in DB
-  - Return HTTP 200 immediately
-- [ ] `disbursement/` service — calls Interswitch Single Transfer API when milestone approved
+**⚠️ Interswitch has TWO auth systems — know which endpoint uses which before writing any code.**
+
+- [ ] Build `interswitchOAuth()` helper — OAuth 2.0 for payment collection + disbursement:
+  ```
+  POST https://sandbox.interswitchng.com/passport/oauth/token
+  Header: Authorization: Basic Base64(CLIENT_ID:SECRET_KEY)
+  Body: grant_type=client_credentials
+  → returns access_token (valid for expires_in seconds, cache and reuse it)
+  ```
+- [ ] Build `interswitchLegacyAuth()` helper — legacy Interswitch Auth for account validation:
+  ```
+  Headers required: InterswitchAuth, Signature (SHA1), Timestamp, Nonce, SignatureMethod, TerminalID
+  Signature = base64(sha1("GET&{url}&{timestamp}&{nonce}&{CLIENT_ID}&{SECRET_KEY}"))
+  ```
+- [ ] `payments/` module — Interswitch Web Checkout collection (uses OAuth):
+  - `initiatePayment(agreementId)` → generates payment URL, redirects client to Interswitch-hosted page
+  - `verifyPayment(transactionRef)` → confirms payment status via transaction query
+- [ ] `POST /webhooks/interswitch` — receives `TRANSACTION.COMPLETED` event:
+  - Verify `X-Interswitch-Signature` using HmacSHA512 against raw JSON body
+  - Return HTTP 200 **immediately** before any other processing (Interswitch retries 5x if no 200)
+  - Then async: mark agreement as `FUNDED` in DB
+- [ ] `disbursement/` service — 4-step flow triggered when `MilestoneApproved` fires:
+  ```
+  Step 1: Validate contractor account (legacy auth)
+  GET /api/v1/nameenquiry/banks/accounts/names
+  Headers: InterswitchAuth, Signature, TerminalID, bankCode, accountId
+
+  Step 2: Compute MAC (SHA512) before every transfer:
+  mac = sha512(initiatingAmount + initiatingCurrencyCode + initiatingPaymentMethodCode
+             + terminatingAmount + terminatingCurrencyCode + terminatingPaymentMethodCode
+             + terminatingCountryCode)
+
+  Step 3: Execute disbursement (OAuth Bearer token)
+  POST https://qa.interswitchng.com/quicktellerservice/api/v5/transactions/TransferFunds
+  Body: { transferCode, mac, initiation: {...}, termination: {...}, sender: {...}, beneficiary: {...} }
+
+  Step 4: Store TransactionReference from response → query status if needed
+  ```
 
 ### End of Day Checkpoint ✅
 - Full flow working: create agreement → pay → confirm milestones → auto-disburse
-- Webhook verified and handling payment confirmation
+- Both Interswitch auth helpers working (OAuth + Legacy)
+- Webhook verified with HmacSHA512 and returning 200 immediately
+- MAC hash computed correctly before every disbursement
 
 &nbsp;
 
@@ -206,16 +246,21 @@
 - [ ] Stress test event listener — does it handle multiple agreements simultaneously?
 - [ ] Fix any blockchain ↔ backend sync issues
 
-### Afternoon (2pm – 6pm): SDK Docs + Demo Script
+### Afternoon (2pm – 6pm): SDK Docs + Publish + Demo Script
 - [ ] Polish SDK README — installation, quickstart, full API reference
-- [ ] Record or prepare a code walkthrough showing SDK usage
+- [ ] Update `package.json` — set name (`nerave-sdk`), version (`0.1.0`), `main`, `types`, `files` fields
+- [ ] Build SDK — `npm run build` — confirm `dist/` output is clean
+- [ ] Create npm account if not already done — `npm login`
+- [ ] Publish to npm — `npm publish --access public`
+- [ ] Verify live on npmjs.com — `npm install nerave-sdk` should work
+- [ ] Update SDK README with real npm install badge + npmjs.com link
 - [ ] Write the demo script — exact steps judges will follow
 - [ ] Prepare Sepolia Etherscan links to show on-chain activity during demo
 - [ ] Final end-to-end test of entire flow
 
 ### End of Day Checkpoint ✅
 - Contract verified on Etherscan
-- SDK README polished
+- `nerave-sdk` live and installable on npm
 - Demo script rehearsed
 
 &nbsp;
@@ -272,7 +317,8 @@
 - [ ] Live frontend URL (Vercel)
 - [ ] Live backend URL (Railway/Render)
 - [ ] Contract address on Sepolia Etherscan
-- [ ] SDK README with installation + quickstart
+- [ ] `nerave-sdk` published on npm — `npm install nerave-sdk` works
+- [ ] SDK README with npm badge, installation + quickstart
 - [ ] Test credentials in README
 - [ ] Demo video or walkthrough (optional but recommended)
 
