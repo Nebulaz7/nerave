@@ -35,8 +35,8 @@
 ## 🔷 Joshua — Smart Contracts + Blockchain Module
 
 ### Morning (9am – 1pm): Smart Contract
-- [ ] `forge init paylock-contracts` — scaffold Foundry project
-- [ ] Write `PayLockAgreement.sol` — core contract with:
+- [x] `forge init paylock-contracts` — scaffold Foundry project
+- [x] Write `PayLockAgreement.sol` — core contract with:
   - Agreement struct (client, contractor, total amount)
   - Milestone struct (title, amount, `clientConfirmed`, `contractorConfirmed`, `disbursed`)
   - `confirmMilestone(uint milestoneId)` — callable by client or contractor
