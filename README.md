@@ -247,6 +247,7 @@
 - [ ] Fix any blockchain ↔ backend sync issues
 
 ### Afternoon (2pm – 6pm): SDK Docs + Publish + Demo Script
+- [ ] Build Developer Portal API Keys Page — add a new Next.js page (`/dashboard/settings`) where developers can copy their auto-generated API key.
 - [ ] Polish SDK README — installation, quickstart, full API reference
 - [ ] Update `package.json` — set name (`nerave-sdk`), version (`0.1.0`), `main`, `types`, `files` fields
 - [ ] Build SDK — `npm run build` — confirm `dist/` output is clean
