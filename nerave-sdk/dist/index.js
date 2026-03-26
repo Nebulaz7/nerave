@@ -15,60 +15,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Nerave = void 0;
-class Nerave {
-    apiKey;
-    baseUrl;
-    constructor(config) {
-        if (!config.apiKey) {
-            throw new Error("Nerave API key is required");
-        }
-        this.apiKey = config.apiKey;
-        this.baseUrl = config.baseUrl || 'https://api.nerave.com/v1'; // Default prod URL
-    }
-    async request(endpoint, options = {}) {
-        const url = `${this.baseUrl}${endpoint}`;
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.apiKey}`,
-            ...(options.headers || {})
-        };
-        const response = await fetch(url, { ...options, headers });
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(`Nerave API error: ${response.status} - ${errorData.message || response.statusText}`);
-        }
-        return response.json();
-    }
-    agreements = {
-        /**
-         * Creates a new trustless agreement and deploys its corresponding smart contract.
-         */
-        create: async (params) => {
-            return this.request('/agreements', {
-                method: 'POST',
-                body: JSON.stringify(params),
-            });
-        },
-        /**
-         * Gets the current state of an agreement and its milestones.
-         */
-        getStatus: async (agreementId) => {
-            return this.request(`/agreements/${agreementId}`, {
-                method: 'GET',
-            });
-        }
-    };
-    milestones = {
-        /**
-         * Confirms a milestone is completed. Requires confirmation from both parties to disburse.
-         */
-        confirm: async (params) => {
-            return this.request(`/agreements/${params.agreementId}/milestones/${params.milestoneId}/confirm`, {
-                method: 'POST',
-                body: JSON.stringify({ role: params.role }),
-            });
-        }
-    };
-}
-exports.Nerave = Nerave;
+var nerave_1 = require("./nerave");
+Object.defineProperty(exports, "Nerave", { enumerable: true, get: function () { return nerave_1.Nerave; } });
 __exportStar(require("./types"), exports);
+//# sourceMappingURL=index.js.map

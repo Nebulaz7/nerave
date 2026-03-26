@@ -1,39 +1,68 @@
 export interface NeraveConfig {
-    apiKey: string;
+    apiKey?: string;
+    apiKeyEnvVar?: string;
     baseUrl?: string;
 }
-export interface CreateAgreementParams {
-    contractorId: string;
-    totalAmount: number;
-    milestones: {
-        title: string;
-        amount: number;
-    }[];
-}
-export interface ConfirmMilestoneParams {
-    agreementId: string;
-    milestoneId: number;
-    role: 'CLIENT' | 'CONTRACTOR';
+export interface User {
+    id: string;
+    email: string;
+    businessName: string;
 }
 export interface Milestone {
-    id: number;
+    id: string;
+    agreementId: string;
     title: string;
     amount: number;
     clientConfirmed: boolean;
     contractorConfirmed: boolean;
     disbursed: boolean;
+    createdAt: string;
 }
-export interface AgreementState {
+export interface CreateMilestoneInput {
+    title: string;
+    amount: number;
+}
+export interface Agreement {
     id: string;
-    contractAddress: string;
+    contractAddress: string | null;
     clientId: string;
     contractorId: string;
-    totalAmount: number;
-    status: string;
+    totalAmount: string;
+    status: AgreementStatus;
+    createdAt: string;
     milestones: Milestone[];
+    client?: Pick<User, 'id' | 'email' | 'businessName'>;
+    contractor?: Pick<User, 'id' | 'email' | 'businessName'>;
 }
-export interface AgreementResponse {
+export type AgreementStatus = 'PENDING_PAYMENT' | 'FUNDED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+export interface CreateAgreementInput {
+    contractorId: string;
+    totalAmount: number;
+    milestones: CreateMilestoneInput[];
+}
+export interface InitiatePaymentResponse {
+    paymentUrl: string;
+    transactionReference: string;
+    note?: string;
+}
+export interface VerifyPaymentResponse {
     success: boolean;
-    data?: any;
+    responseCode: string;
+    transactionReference: string;
+}
+export interface ConfirmMilestoneInput {
+    agreementId: string;
+    milestoneId: string;
+}
+export interface ConfirmMilestoneResponse {
+    message: string;
+    clientConfirmed: boolean;
+    contractorConfirmed: boolean;
+    fullyApproved: boolean;
+}
+export interface NeraveError {
+    statusCode: number;
+    message: string;
     error?: string;
 }
+//# sourceMappingURL=types.d.ts.map

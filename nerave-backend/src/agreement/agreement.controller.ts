@@ -11,10 +11,10 @@ import {
 } from '@nestjs/common';
 import { AgreementsService } from './agreement.service';
 import { CreateAgreementDto } from './dto/create-agreement.dto';
-import { JwtGuard } from '../auth/guard/jwt.guard';
+import { CombinedGuard } from '../auth/guard/combined.guard';
 
 @Controller(['agreement', 'agreements'])
-@UseGuards(JwtGuard)
+@UseGuards(CombinedGuard)
 export class AgreementsController {
   constructor(private agreementsService: AgreementsService) {}
 

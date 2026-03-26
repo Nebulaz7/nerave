@@ -43,5 +43,32 @@ const state = await nerave.agreements.getStatus(agreement.data.id);
 console.log(state.milestones[0].disbursed); // true if both confirmed
 ```
 
+## Environment Variables
+
+You can load your API key from `.env` instead of hardcoding it.
+
+```env
+NERAVE_API_KEY=pk_test_your_api_key_here
+```
+
+```typescript
+import { Nerave } from 'nerave-sdk';
+import 'dotenv/config';
+
+const nerave = new Nerave({
+  // Reads process.env.NERAVE_API_KEY
+  baseUrl: 'http://localhost:5000',
+});
+```
+
+You can also use a custom env var name:
+
+```typescript
+const nerave = new Nerave({
+  apiKeyEnvVar: 'MY_CUSTOM_NERAVE_KEY',
+  baseUrl: 'http://localhost:5000',
+});
+```
+
 ## TypeScript Types
 The SDK exports full typescript types defining interfaces for `CreateAgreementParams`, `ConfirmMilestoneParams`, `AgreementState`, etc.

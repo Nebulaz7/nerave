@@ -1,16 +1,22 @@
 {
   "name": "nerave-sdk",
   "version": "0.1.0",
-  "description": "TypeScript SDK for Nerave Trustless Escrow",
+  "description": "Trustless milestone payments SDK for African businesses",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "keywords": ["payments", "escrow", "milestones", "africa", "fintech"],
+  "author": "Nerave",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0"
   },
   "devDependencies": {
-    "typescript": "^5.3.3"
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
   }
 }

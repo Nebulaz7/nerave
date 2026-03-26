@@ -1,0 +1,1 @@
+{"version":3,"file":"milestones.js","sourceRoot":"","sources":["../../src/resources/milestones.ts"],"names":[],"mappings":";;;AAMA,MAAa,kBAAkB;IAC7B,YAAoB,IAAgB;QAAhB,SAAI,GAAJ,IAAI,CAAY;IAAG,CAAC;IAExC,KAAK,CAAC,OAAO,CAAC,KAA4B;QACxC,OAAO,IAAI,CAAC,IAAI,CAAC,IAAI,CACnB,eAAe,KAAK,CAAC,WAAW,eAAe,KAAK,CAAC,WAAW,UAAU,CAC3E,CAAC;IACJ,CAAC;CACF;AARD,gDAQC"}

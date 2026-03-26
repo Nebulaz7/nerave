@@ -6,7 +6,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { JwtGuard } from '../auth/guard/jwt.guard';
+import { CombinedGuard } from '../auth/guard/combined.guard';
 import { PaymentsService } from './payment.service';
 
 @Controller('payments')
@@ -14,7 +14,7 @@ export class PaymentsController {
   constructor(private paymentsService: PaymentsService) {}
 
   @Post('initiate/:agreementId')
-  @UseGuards(JwtGuard)
+  @UseGuards(CombinedGuard)
   initiate(@Param('agreementId') agreementId: string) {
     return this.paymentsService.initiatePayment(agreementId);
   }
