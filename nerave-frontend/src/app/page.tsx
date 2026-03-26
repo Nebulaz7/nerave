@@ -10,7 +10,7 @@ import { Footer } from "@/components/landing/Footer";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#050505] text-white noise-texture font-sans">
+    <div className="min-h-screen noise-texture font-sans bg-[#f7f6f6] text-[#09090b] selection:bg-[#7c3aed]/20">
       <Navbar />
       <main>
         <Hero />

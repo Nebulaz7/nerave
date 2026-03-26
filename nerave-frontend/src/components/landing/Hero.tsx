@@ -1,20 +1,32 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight, CheckCircle2 } from "lucide-react";
+import {
+  ArrowUpRight,
+  CheckCircle2,
+  Shield,
+  Database,
+  Network,
+  Server,
+  GitBranch,
+  Lock,
+  Sparkles,
+} from "lucide-react";
 import Link from "next/link";
 
 export function Hero() {
   return (
-    <section className="relative min-h-[90vh] mb-2 flex items-center px-6 lg:px-12 pt-20 bg-[#f9f9f9]">
-      <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-12 gap-12 items-center">
-        <div className="lg:col-span-12 xl:col-span-7">
+    <section className="relative min-h-[90vh] flex items-center px-6 lg:px-12 pt-24 pb-16 bg-[#f7f6f6] overflow-hidden">
+      <div className="absolute inset-0 bg-[#f7f6f6] noise-texture pointer-events-none"></div>
+
+      <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-12 gap-12 items-center relative z-10">
+        <div className="lg:col-span-12 xl:col-span-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center mt-2 gap-2 px-3 py-1.5 bg-[#7c3aed]/10 text-[#7c3aed] rounded-full text-sm font-medium mb-6 border border-[#7c3aed]/20"
+            className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#f3e8ff] text-[#7c3aed] rounded-full text-sm font-medium mb-8"
           >
-            <CheckCircle2 className="w-4 h-4" />
+            <Sparkles className="w-4 h-4" />
             <span>Built on Interswitch</span>
           </motion.div>
 
@@ -22,21 +34,22 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-5xl lg:text-6xl font-light text-black leading-tight mb-6 tracking-tight"
+            className="text-5xl lg:text-6xl font-light leading-tight mb-6 text-gray-900 tracking-tight"
           >
-            Trustless B2B payments with{" "}
-            <span className="text-[#7c3aed] font-medium">smart escrow</span>
+            Trustless payments with
+            <span className="bg-[#f3e8ff] px-2 relative inline-block text-[#7c3aed] rounded">
+              smart escrow
+            </span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-xl text-gray-600 leading-relaxed mb-8 max-w-2xl"
+            className="text-xl text-gray-600 leading-relaxed mb-8 max-w-lg"
           >
-            A contractor in Lagos completed a ₦1 million project and got paid
-            automatically the moment the client clicked approve — no calls, no
-            delays, no broken promises.
+            Generate verifiable agreements, lock funds safely, and disburse
+            automatically via Interswitch upon milestone confirmation.
           </motion.p>
 
           <motion.div
@@ -47,14 +60,14 @@ export function Hero() {
           >
             <Link
               href="/dashboard"
-              className="px-8 py-4 bg-[#7c3aed] hover:bg-[#6d28d9] rounded-lg font-medium flex items-center gap-2 transition-colors"
+              className="px-8 py-4 bg-[#7c3aed] hover:bg-[#6d28d9] text-white rounded-lg font-medium flex items-center gap-2 transition-colors shadow-md shadow-[#7c3aed]/20"
             >
               Start Building
               <ArrowUpRight className="w-4 h-4" />
             </Link>
             <a
               href="#docs"
-              className="px-8 py-4 glass-card border-[#7c3aed] bg-white text-black rounded-lg font-medium hover:bg-black/5 transition-colors"
+              className="px-8 py-4 bg-white text-gray-900 border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition-colors shadow-sm"
             >
               View Documentation
             </a>
@@ -67,66 +80,80 @@ export function Hero() {
             className="flex items-center gap-8"
           >
             <div>
-              <div className="text-3xl text-black font-light mb-1">100%</div>
-              <div className="text-sm text-black">On-Chain Verified</div>
+              <div className="text-3xl font-light text-gray-900 mb-1">100%</div>
+              <div className="text-sm text-gray-500">On-Chain Verified</div>
             </div>
-            <div className="w-px h-12 bg-black"></div>
+            <div className="w-px h-12 bg-gray-200"></div>
             <div>
-              <div className="text-3xl text-black font-light mb-1">₦0</div>
-              <div className="text-sm text-black">Middleman Fees</div>
+              <div className="text-3xl font-light text-gray-900 mb-1">
+                99.9%
+              </div>
+              <div className="text-sm text-gray-500">Uptime Guarantee</div>
             </div>
-            <div className="w-px h-12 bg-black"></div>
+            <div className="w-px h-12 bg-gray-200"></div>
             <div>
-              <div className="text-3xl text-black font-light mb-1">&lt;1s</div>
-              <div className="text-sm text-black">Disbursement</div>
+              <div className="text-3xl font-light text-gray-900 mb-1">
+                &lt;1s
+              </div>
+              <div className="text-sm text-gray-500">Disbursement</div>
             </div>
           </motion.div>
         </div>
 
-        <div className="hidden xl:block lg:col-span-5 relative h-[500px]">
+        <div className="hidden xl:block lg:col-span-6 relative h-[600px]">
           <div className="absolute inset-0 flex items-center justify-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-              className="w-full h-full border border-white/10 rounded-2xl bg-[#0a0a0a]/80 backdrop-blur-sm flex flex-col items-center justify-center p-8 relative overflow-hidden shadow-2xl"
-            >
-              <div className="absolute top-0 left-0 w-full h-1 bg-[#7c3aed]"></div>
+            {/* Central Node */}
+            <div className="relative z-10 w-28 h-28 bg-white rounded-3xl shadow-[0_8px_30px_rgb(124,58,237,0.12)] border border-gray-100 flex items-center justify-center">
+              <div className="absolute inset-0 bg-[#7c3aed] rounded-3xl blur-2xl opacity-20 transform scale-150"></div>
+              <Sparkles className="w-10 h-10 text-[#7c3aed] relative z-20" />
+            </div>
 
-              <div className="w-full space-y-4">
-                <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                  <span className="font-mono text-white/40 text-sm">
-                    PayLockAgreement.sol
-                  </span>
-                  <span className="px-2 py-1 bg-[#7c3aed]/20 text-[#7c3aed] text-xs font-mono rounded border border-[#7c3aed]/30">
-                    Deployed
-                  </span>
-                </div>
+            {/* Orbiting Nodes */}
+            {[
+              { icon: Shield, angle: 0 },
+              { icon: Database, angle: 60 },
+              { icon: Server, angle: 120 },
+              { icon: GitBranch, angle: 180 },
+              { icon: Lock, angle: 240 },
+              { icon: Network, angle: 300 },
+            ].map((node, i) => {
+              const radius = 160;
+              const angleRad = (node.angle * Math.PI) / 180;
+              const x = Math.cos(angleRad) * radius;
+              const y = Math.sin(angleRad) * radius;
 
-                <div className="space-y-2 font-mono text-sm leading-relaxed">
-                  <div className="text-white/70">
-                    <span className="text-[#a78bfa]">function</span>{" "}
-                    <span className="text-white">confirmMilestone</span>(){" "}
-                    <span className="text-[#a78bfa]">external</span> {"{"}
-                  </div>
-                  <div className="pl-4 text-white/50">
-                    require(isClient || isContractor);
-                  </div>
-                  <div className="pl-4 text-white/50">
-                    milestone.approvals++;
-                  </div>
-                  <div className="pl-4 text-white/50 mt-2">
-                    if (milestone.isApproved) {"{"}
-                  </div>
-                  <div className="pl-8 text-[#7c3aed] flex items-center gap-2">
-                    <ArrowUpRight className="w-3 h-3" />
-                    releaseFunds(Interswitch);
-                  </div>
-                  <div className="pl-4 text-white/50">{"}"}</div>
-                  <div className="text-white/70">{"}"}</div>
+              return (
+                <div
+                  key={i}
+                  className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                >
+                  {/* Dashed line connecting to center */}
+                  <div
+                    className="absolute border-b-2 border-dashed border-[#7c3aed]/20 w-[160px]"
+                    style={{
+                      transformOrigin: "left center",
+                      transform: `rotate(${node.angle}deg)`,
+                    }}
+                  />
+                  {/* Node */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{
+                      delay: 0.5 + i * 0.1,
+                      duration: 0.5,
+                      type: "spring",
+                    }}
+                    className="absolute w-12 h-12 rounded-full bg-[#7c3aed] shadow-[0_0_20px_rgba(124,58,237,0.4)] border-2 border-white flex items-center justify-center pointer-events-auto"
+                    style={{
+                      transform: `translate(${x}px, ${y}px)`,
+                    }}
+                  >
+                    <node.icon className="w-5 h-5 text-white" />
+                  </motion.div>
                 </div>
-              </div>
-            </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>
