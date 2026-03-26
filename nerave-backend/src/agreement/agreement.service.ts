@@ -4,14 +4,19 @@ import {
   ForbiddenException,
   BadRequestException,
   Logger,
+  OnModuleInit,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { BlockchainService } from '../blockchain/blockchain.service';
 import { CreateAgreementDto } from './dto/create-agreement.dto';
 import { User, Role } from '@prisma/client';
+import { AgreementStatus } from '@prisma/client';
+import { isAddress } from 'viem';
+
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 @Injectable()
-export class AgreementsService {
+export class AgreementsService implements OnModuleInit {
   private readonly logger = new Logger(AgreementsService.name);
 
   constructor(
@@ -19,6 +24,43 @@ export class AgreementsService {
     private blockchain: BlockchainService,
   ) {}
 
+  async onModuleInit() {
+    await this.reattachAllListeners();
+  }
+
+  private async reattachAllListeners() {
+    const activeAgreements = await this.prisma.agreement.findMany({
+      where: {
+        contractAddress: { not: null },
+        status: { notIn: [AgreementStatus.COMPLETED, AgreementStatus.CANCELLED] },
+      },
+    });
+
+    this.logger.log(
+      `Reattaching listeners for ${activeAgreements.length} active agreements`,
+    );
+
+    for (const agreement of activeAgreements) {
+      const contractAddress = agreement.contractAddress;
+      if (
+        !contractAddress ||
+        contractAddress.toLowerCase() === ZERO_ADDRESS
+      ) {
+        continue;
+      }
+
+      this.blockchain.listenToEvents(
+        contractAddress,
+        async (milestoneId, amount) => {
+          this.logger.log(
+            `MilestoneApproved — agreement: ${agreement.id}, milestone: ${milestoneId}`,
+          );
+          // payments service call goes here on Day 2
+        },
+      );
+    }
+  }
+  
   async create(dto: CreateAgreementDto, client: User) {
     // Only clients can create agreements
     if (client.role !== Role.CLIENT) {
@@ -61,6 +103,13 @@ export class AgreementsService {
     // Deploy smart contract on Sepolia
     // Joshua's deployAgreement() returns the contract address
     try {
+      if (!isAddress(client.id) || !isAddress(contractor.id)) {
+        this.logger.warn(
+          `Skipping contract deployment for agreement ${agreement.id}: client/contractor IDs are not EVM addresses`,
+        );
+        return agreement;
+      }
+
       const contractAddress = await this.blockchain.deployAgreement(
         client.id,        // placeholder — Joshua may want wallet addresses instead
         contractor.id,
