@@ -27,7 +27,7 @@ export function Hero() {
             className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#f3e8ff] text-[#7c3aed] rounded-full text-sm font-medium mb-8"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Built on Interswitch</span>
+            <span>Built on Interswitch & Ethereum</span>
           </motion.div>
 
           <motion.h1
