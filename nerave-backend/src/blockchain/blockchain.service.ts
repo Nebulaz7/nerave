@@ -5,8 +5,6 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { sepolia } from 'viem/chains';
 import * as WebSocket from 'ws';
 
-
-
 if (typeof globalThis.WebSocket === 'undefined') {
   (globalThis as any).WebSocket = WebSocket;
 }
@@ -127,23 +125,14 @@ export class BlockchainService implements OnModuleInit {
     this.account = privateKeyToAccount(privateKey as `0x${string}`);
 
     this.publicClient = createPublicClient({
-<<<<<<< HEAD
-      chain: sepolia, // Sepolia testnet
-      transport: http(rpcUrl || undefined), // Uses configured RPC URL when available.
-=======
       chain: sepolia,
       transport: http(this.configService.get<string>('RPC_URL') || undefined),
->>>>>>> f15927f9aaefcd083ac61f231da78901107b274e
     });
 
     this.walletClient = createWalletClient({
       account: this.account,
       chain: sepolia,
-<<<<<<< HEAD
-      transport: http(rpcUrl || undefined),
-=======
       transport: http(this.configService.get<string>('RPC_URL') || undefined),
->>>>>>> f15927f9aaefcd083ac61f231da78901107b274e
     });
   }
 
@@ -238,21 +227,6 @@ export class BlockchainService implements OnModuleInit {
       amount: string,
     ) => Promise<void> | void,
   ) {
-<<<<<<< HEAD
-    if (contractAddress.toLowerCase() === ZERO_ADDRESS) {
-      this.logger.log('[MOCK] Skipping event listener for zero-address contract');
-      return;
-    }
-
-    if (this.isMockMode) {
-      this.logger.log(
-        `[MOCK] listenToEvents registered for ${contractAddress} (no chain subscription in mock mode)`,
-      );
-      return;
-    }
-
-=======
->>>>>>> f15927f9aaefcd083ac61f231da78901107b274e
     this.logger.log(
       `Listening for MilestoneApproved events on ${contractAddress}`,
     );
