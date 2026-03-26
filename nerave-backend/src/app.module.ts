@@ -4,6 +4,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { BlockchainModule } from './blockchain/blockchain.module';
 import { AuthModule } from './auth/auth.module';
 import { AgreementsModule } from './agreement/agreement.module';
+import { PaymentsModule } from './payment/payment.module';
+import { WebhooksModule } from './payment/webhooks/webhooks.module';
 
 @Module({
   imports: [
@@ -12,6 +14,8 @@ import { AgreementsModule } from './agreement/agreement.module';
     AuthModule,
     BlockchainModule,
     AgreementsModule,
+    PaymentsModule,
+    WebhooksModule,
   ],
 })
 export class AppModule {}

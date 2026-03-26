@@ -3,6 +3,22 @@ import { ConfigService } from '@nestjs/config';
 import { createPublicClient, createWalletClient, http, Address } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { sepolia } from 'viem/chains';
+import * as WebSocket from 'ws';
+
+
+
+if (typeof globalThis.WebSocket === 'undefined') {
+  (globalThis as any).WebSocket = WebSocket;
+}
+
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+
+function toHttpRpcUrl(url?: string): string | undefined {
+  if (!url) return undefined;
+  if (url.startsWith('wss://')) return `https://${url.slice('wss://'.length)}`;
+  if (url.startsWith('ws://')) return `http://${url.slice('ws://'.length)}`;
+  return url;
+}
 
 // Minimal ABI for PayLockAgreement
 const payLockAbi = [
@@ -58,6 +74,14 @@ export class BlockchainService implements OnModuleInit {
     const privateKey =
       this.configService.get<string>('WALLET_PRIVATE_KEY') ??
       this.configService.get<string>('PRIVATE_KEY');
+    const rawRpcUrl = this.configService.get<string>('SEPOLIA_RPC_URL');
+    const rpcUrl = toHttpRpcUrl(rawRpcUrl);
+
+    if (rawRpcUrl?.startsWith('ws://') || rawRpcUrl?.startsWith('wss://')) {
+      this.logger.warn(
+        'SEPOLIA_RPC_URL is ws/wss. Converted to http/https for current viem HTTP transport.',
+      );
+    }
 
     if (!privateKey) {
       this.isMockMode = true;
@@ -73,13 +97,13 @@ export class BlockchainService implements OnModuleInit {
     // 3. Setup Sepolia (Testnet) Clients
     this.publicClient = createPublicClient({
       chain: sepolia, // Sepolia testnet
-      transport: http(this.configService.get<string>('SEPOLIA_RPC_URL') || undefined), // Uses configured RPC URL when available.
+      transport: http(rpcUrl || undefined), // Uses configured RPC URL when available.
     });
 
     this.walletClient = createWalletClient({
       account: this.account, // Bind the account to the WalletClient
       chain: sepolia,
-      transport: http(this.configService.get<string>('SEPOLIA_RPC_URL') || undefined),
+      transport: http(rpcUrl || undefined),
     });
   }
 
@@ -150,6 +174,11 @@ export class BlockchainService implements OnModuleInit {
     contractAddress: string,
     onMilestoneApproved?: (milestoneId: string, amount: string) => Promise<void> | void,
   ) {
+    if (contractAddress.toLowerCase() === ZERO_ADDRESS) {
+      this.logger.log('[MOCK] Skipping event listener for zero-address contract');
+      return;
+    }
+
     if (this.isMockMode) {
       this.logger.log(
         `[MOCK] listenToEvents registered for ${contractAddress} (no chain subscription in mock mode)`,
