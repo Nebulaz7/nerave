@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "postinstall": "npm --prefix ../nerave-sdk install",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
