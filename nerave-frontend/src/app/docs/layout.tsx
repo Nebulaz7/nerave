@@ -10,6 +10,7 @@ import {
   Home,
   LayoutDashboard,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function DocsLayout({
   children,
@@ -47,8 +48,13 @@ export default function DocsLayout({
       <aside className="hidden md:flex flex-col w-64 border-r border-gray-200 bg-gray-50/50 sticky top-0 h-screen overflow-y-auto">
         <div className="h-16 flex items-center px-6 border-b border-gray-200/50 bg-white">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-white shadow-sm border border-gray-100 flex items-center justify-center group-hover:border-[#7c3aed]/50 transition-colors">
-              <Sparkles className="w-4 h-4 text-[#7c3aed]" />
+            <div className="w-8 h-8 flex items-center justify-center">
+              <Image
+                src="/nerave-logo.svg"
+                alt="Nerave Logo"
+                width={32}
+                height={32}
+              />
             </div>
             <span className="font-semibold tracking-tight text-gray-900">
               Nerave Docs

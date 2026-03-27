@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { TextSelect, Brain, Heart, AudioLines, Headphones } from "lucide-react";
+import { Shield, Database, Network, Server, GitBranch, Lock, Activity } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const HeroAnimation = () => {
@@ -30,9 +30,12 @@ const HeroAnimation = () => {
     const y = 50 + Math.sin(angle) * 35;
 
     const icons = [
-      <TextSelect key="text-select" className="w-5 h-5 text-white" />,
-      <Brain key="brain" className="w-5 h-5 text-white" />,
-      <Heart key="heart" className="w-5 h-5 text-white" />,
+      <Shield key="shield" className="w-5 h-5 text-white" />,
+      <Database key="database" className="w-5 h-5 text-white" />,
+      <Network key="network" className="w-5 h-5 text-white" />,
+      <Server key="server" className="w-5 h-5 text-white" />,
+      <GitBranch key="branch" className="w-5 h-5 text-white" />,
+      <Lock key="lock" className="w-5 h-5 text-white" />,
     ];
 
     return (
@@ -56,7 +59,7 @@ const HeroAnimation = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full blur-xl opacity-60" />
           <div className="relative w-13 h-13 bg-white rounded-2xl flex items-center justify-center">
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center">
-              {icons[i % 3]}
+              {icons[i % icons.length]}
             </div>
           </div>
           <motion.div
@@ -145,7 +148,7 @@ const HeroAnimation = () => {
           <div className="relative w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full p-[2px]">
             <div className="w-full h-full bg-purple rounded-full flex items-center justify-center">
               <div className="relative">
-                <Headphones className="w-10 h-10 text-white" />
+                <Shield className="w-10 h-10 text-white" />
                 <motion.div
                   className="absolute -inset-2"
                   animate={{ opacity: [0, 1, 0], scale: [0.8, 1.2, 0.8] }}
@@ -155,7 +158,7 @@ const HeroAnimation = () => {
                     ease: "easeOut",
                   }}
                 >
-                  <AudioLines className="w-14 h-14 text-white/30" />
+                  <Activity className="w-14 h-14 text-white/30" />
                 </motion.div>
               </div>
             </div>

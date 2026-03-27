@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -13,6 +14,13 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
           {/* Flat logo text */}
+          <Image
+            src="/nerave-logo.svg"
+            alt="Nerave Logo"
+            width={32}
+            height={32}
+          />
+
           <span className="text-xl text-gray-900 font-medium tracking-tight">
             Nerave
           </span>

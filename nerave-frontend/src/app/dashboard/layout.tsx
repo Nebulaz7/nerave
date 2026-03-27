@@ -14,6 +14,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function DashboardLayout({
   children,
@@ -57,8 +58,13 @@ export default function DashboardLayout({
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 z-20">
         <div className="h-16 flex items-center px-6 border-b border-gray-100">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-white shadow-sm border border-gray-100 flex items-center justify-center group-hover:border-[#7c3aed]/50 transition-colors">
-              <Sparkles className="w-4 h-4 text-[#7c3aed]" />
+            <div className="w-8 h-8 flex items-center justify-center">
+              <Image
+                src="/nerave-logo.svg"
+                alt="Nerave Logo"
+                width={32}
+                height={32}
+              />
             </div>
             <span className="font-semibold tracking-tight text-gray-900">
               Nerave
