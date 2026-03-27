@@ -5,9 +5,12 @@ import {
   BadRequestException,
   Logger,
   OnModuleInit,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { BlockchainService } from '../blockchain/blockchain.service';
+import { PaymentsService } from '../payment/payment.service';
 import { CreateAgreementDto } from './dto/create-agreement.dto';
 import { User, Role } from '@prisma/client';
 import { AgreementStatus } from '@prisma/client';
@@ -22,6 +25,8 @@ export class AgreementsService implements OnModuleInit {
   constructor(
     private prisma: PrismaService,
     private blockchain: BlockchainService,
+    @Inject(forwardRef(() => PaymentsService))
+    private payments: PaymentsService,
   ) {}
 
   async onModuleInit() {
@@ -53,9 +58,14 @@ export class AgreementsService implements OnModuleInit {
         contractAddress,
         async (milestoneId, amount) => {
           this.logger.log(
-            `MilestoneApproved — agreement: ${agreement.id}, milestone: ${milestoneId}`,
+            `MilestoneApproved — agreement: ${agreement.id}, milestone: ${milestoneId}, amount: ${amount}`,
           );
-          // payments service call goes here on Day 2
+          try {
+            await this.payments.disburseMilestone(agreement.id, Number(milestoneId));
+            this.logger.log(`Auto-disbursement completed for milestone ${milestoneId}`);
+          } catch (err) {
+            this.logger.error(`Auto-disbursement FAILED for milestone ${milestoneId}`, err);
+          }
         },
       );
     }
@@ -128,8 +138,12 @@ export class AgreementsService implements OnModuleInit {
         this.logger.log(
           `MilestoneApproved fired — milestoneId: ${milestoneId}, amount: ${amount}`,
         );
-        // This is where payments service will be called (Day 2)
-        // For now just log it
+        try {
+          await this.payments.disburseMilestone(updated.id, Number(milestoneId));
+          this.logger.log(`Auto-disbursement triggered for milestone ${milestoneId}`);
+        } catch (err) {
+          this.logger.error(`Auto-disbursement failed for milestone ${milestoneId}`, err);
+        }
       });
 
       return updated;
@@ -216,11 +230,31 @@ export class AgreementsService implements OnModuleInit {
       );
     }
 
+    const fullyApproved = updated.clientConfirmed && updated.contractorConfirmed;
+
+    // When both parties confirm, trigger disbursement immediately
+    if (fullyApproved && !updated.disbursed) {
+      const milestoneIndex = agreement.milestones.findIndex(
+        (m) => m.id === milestoneId,
+      );
+      this.logger.log(
+        `Both parties confirmed milestone ${milestoneId} — triggering auto-disbursement`,
+      );
+      try {
+        await this.payments.disburseMilestone(agreementId, milestoneIndex);
+        this.logger.log(`Auto-disbursement completed for milestone ${milestoneId}`);
+      } catch (err) {
+        this.logger.error(`Auto-disbursement failed for milestone ${milestoneId}`, err);
+      }
+    }
+
     return {
-      message: 'Milestone confirmed',
+      message: fullyApproved
+        ? 'Milestone confirmed — disbursement triggered!'
+        : 'Milestone confirmed',
       clientConfirmed: updated.clientConfirmed,
       contractorConfirmed: updated.contractorConfirmed,
-      fullyApproved: updated.clientConfirmed && updated.contractorConfirmed,
+      fullyApproved,
     };
   }
 
