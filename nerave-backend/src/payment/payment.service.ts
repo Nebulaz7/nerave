@@ -55,7 +55,7 @@ export class PaymentsService {
       });
 
       return {
-        paymentUrl: `http://localhost:3000/api/v1/payments/mock-pay/${transactionRef}`,
+        paymentUrl: `https://nerave.onrender.com/payments/mock-pay/${transactionRef}`,
         transactionReference: transactionRef,
         note: 'MOCK MODE - real Interswitch credentials pending',
       };
