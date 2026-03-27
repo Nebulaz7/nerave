@@ -1,6 +1,6 @@
 {
   "name": "nerave-sdk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Trustless milestone payments SDK for African businesses",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
