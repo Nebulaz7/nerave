@@ -13,6 +13,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import Link from "next/link";
+import HeroAnimation from "./HeroAnimation";
 
 export function Hero() {
   return (
@@ -24,7 +25,7 @@ export function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#f3e8ff] text-[#7c3aed] rounded-full text-sm font-medium mb-8"
+            className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#f3e8ff] text-[#7c3aed] rounded-full text-sm font-medium mb-2"
           >
             <Sparkles className="w-4 h-4" />
             <span>Built on Interswitch & Ethereum</span>
@@ -101,7 +102,9 @@ export function Hero() {
         </div>
 
         <div className="hidden xl:block lg:col-span-6 relative h-[600px]">
-          <div className="absolute inset-0 flex items-center justify-center"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <HeroAnimation />
+          </div>
         </div>
       </div>
     </section>
