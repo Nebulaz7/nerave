@@ -1,8 +1,7 @@
 <p align="center">
-  <img src="./nerave-banner.png" alt="Nerave Banner" width="100%" />
+  <img src="./nerave-frontend/public/Nerave-plane.svg" alt="Nerave Banner" width="100%" />
 </p>
 
-<h1 align="center">🔐 Nerave</h1>
 
 <h3 align="center">
   <em>The nerve center of trust — Trustless milestone payments for African businesses.</em>
@@ -394,9 +393,9 @@ nerave/
 
 | Name | Role | Contributions |
 |------|------|--------------|
-| **Joshua** | Smart Contracts + Blockchain | Solidity contract, Foundry tests, Viem integration, SDK architecture, blockchain event listeners, auto-disbursement pipeline |
-| **Backend Dev** | API + Payments | NestJS modules, Prisma schema, Interswitch OAuth + Legacy auth, disbursement flow, webhook handling, MAC hash computation |
-| **Designer** | Frontend + Brand | Brand identity, UI/UX design, React frontend, demo application, responsive layouts |
+| **Peters Joshua** | Frontend | Smart Contracts + Blockchain | Solidity contract, Foundry tests, Viem integration, SDK architecture, blockchain event listeners, auto-disbursement pipeline |
+| **Ademola Aderemi** | API + Payments | NestJS modules, Prisma schema, Interswitch OAuth + Legacy auth, disbursement flow, webhook handling, MAC hash computation |
+| **Augustine Emmanuel** |  Brand | Brand identity, UI/UX design, React frontend, demo application, responsive layouts |
 
 ---
 
