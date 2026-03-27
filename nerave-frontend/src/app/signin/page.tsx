@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Loader2, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function SignIn() {
   const router = useRouter();
@@ -61,9 +62,13 @@ export default function SignIn() {
         href="/"
         className="absolute top-8 left-8 flex items-center gap-2 group z-20"
       >
-        <div className="w-8 h-8 rounded-lg bg-white shadow-sm border border-gray-100 flex items-center justify-center group-hover:border-[#7c3aed]/50 transition-colors">
-          {/* logo */}
-          {/* <Sparkles className="w-4 h-4 text-[#7c3aed]" /> */}
+        <div className="w-8 h-8 flex items-center justify-center">
+          <Image
+            src="/nerave-logo.svg"
+            alt="Nerave Logo"
+            width={32}
+            height={32}
+          />
         </div>
         <span className="font-medium tracking-tight text-gray-900">Nerave</span>
       </Link>

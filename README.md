@@ -102,10 +102,10 @@
 ### Morning (9am – 1pm): Brand Identity
 
 - [x] Define Nerave brand — name means **nerve center of trust**
-- [ ] Choose color palette — suggest deep navy `#0A0F1E` + electric teal `#00D4AA` + white
-- [ ] Choose typography — one strong display font + one clean body font (avoid Inter/Roboto)
-- [ ] Design logo — wordmark or icon mark
-- [ ] Create brand board in Figma — colors, fonts, spacing scale, button styles
+- [X] Choose color palette — suggest deep navy `#0A0F1E` + electric teal `#00D4AA` + white
+- [X] Choose typography — one strong display font + one clean body font (avoid Inter/Roboto)
+- [X] Design logo — wordmark or icon mark
+- [X] Create brand board in Figma — colors, fonts, spacing scale, button styles
 
 ### Afternoon (2pm – 7pm): Core Screens (Figma)
 

@@ -1,6 +1,8 @@
 export interface NeraveConfig {
     apiKey?: string;
     apiKeyEnvVar?: string;
+    envFilePath?: string;
+    loadEnvFile?: boolean;
     baseUrl?: string;
 }
 export interface User {

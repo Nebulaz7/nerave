@@ -17,7 +17,7 @@ export function Footer() {
           </div>
           <div className="flex gap-8 text-sm text-gray-600">
             <Link
-              href="#docs"
+              href="/docs"
               className="hover:text-gray-900 transition-colors"
             >
               Documentation
