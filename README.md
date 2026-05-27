@@ -393,7 +393,7 @@ nerave/
 
 | Name | Role | Contributions |
 |------|------|--------------|
-| **Peters Joshua** | Frontend | Smart Contracts + Blockchain | Solidity contract, Foundry tests, Viem integration, SDK architecture, blockchain event listeners, auto-disbursement pipeline |
+| **Peters Joshua** | Frontend & Smart Contracts + Blockchain | Solidity contract, Foundry tests, Viem integration, SDK architecture, blockchain event listeners, auto-disbursement pipeline |
 | **Ademola Aderemi** | API + Payments | NestJS modules, Prisma schema, Interswitch OAuth + Legacy auth, disbursement flow, webhook handling, MAC hash computation |
 | **Augustine Emmanuel** |  Brand | Brand identity, UI/UX design, React frontend, demo application, responsive layouts |
 
@@ -437,9 +437,9 @@ npm run dev
 
 ```env
 # Interswitch Sandbox
-INTERSWITCH_CLIENT_ID=IKIA732217EE0092C23AC6B6D3CC62C29D9747E9B0A6
-INTERSWITCH_SECRET_KEY=5qaZhlOt8msVqXx
-INTERSWITCH_TERMINAL_ID=3PBL0001
+INTERSWITCH_CLIENT_ID=
+INTERSWITCH_SECRET_KEY=
+INTERSWITCH_TERMINAL_ID=
 INTERSWITCH_BASE_URL=https://sandbox.interswitchng.com
 INTERSWITCH_TRANSFER_URL=https://qa.interswitchng.com
 
